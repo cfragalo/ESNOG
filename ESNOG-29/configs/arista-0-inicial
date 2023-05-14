@@ -1,0 +1,39 @@
+
+puedes configurar una sesión BGP entre dos Peers BGP para un equipo Arista 
+---
+
+! Configuración global de BGP
+router bgp <número-de-AS>
+   router-id <dirección-IP-del-router>
+   maximum-paths <número-de-caminos>
+   neighbor <dirección-IP-del-peer> remote-as <número-de-AS-del-peer>
+   neighbor <dirección-IP-del-peer> password <contraseña-del-peer>
+   neighbor <dirección-IP-del-peer> maximum-routes <número-máximo-de-rutas>
+
+   ! Configuración de anuncios de red
+   network <prefijo-de-red-a-anunciar>
+
+   ! Configuración de políticas de enrutamiento
+   neighbor <dirección-IP-del-peer> route-map <nombre-de-política> in
+   neighbor <dirección-IP-del-peer> route-map <nombre-de-política> out
+
+
+
+Explicación de los comandos:
+
+<número-de-AS>: Reemplaza esto con el número de sistema autónomo (ASN) de tu propio sistema.
+<dirección-IP-del-router>: Especifica la dirección IP del router Arista.
+<número-de-caminos>: Define el número máximo de caminos permitidos para el enrutamiento.
+<dirección-IP-del-peer>: Indica la dirección IP del peer BGP con el que deseas establecer la sesión.
+<número-de-AS-del-peer>: Configura el número de sistema autónomo del peer BGP.
+<contraseña-del-peer>: Establece una contraseña opcional para la autenticación del peer BGP.
+<número-máximo-de-rutas>: Establece el número máximo de rutas que se pueden recibir del peer.
+<prefijo-de-red-a-anunciar>: Inserta el prefijo de red que deseas anunciar al peer BGP.
+<nombre-de-política>: Indica el nombre de la política de enrutamiento utilizada para filtrar o modificar las rutas.
+
+Recuerda que también debes configurar las direcciones IP de las interfaces del equipo Arista y asegurarte de que haya conectividad entre ellos antes de configurar BGP. Además, ten en cuenta que este es solo un ejemplo básico y pueden haber otras opciones y ajustes adicionales dependiendo de tus requisitos de red.
+
+===
+
+
+

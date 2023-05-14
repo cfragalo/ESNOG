@@ -1,0 +1,29 @@
+
+puedes configurar una sesión BGP entre dos peers BGP para un router Juniper
+---
+
+set protocols bgp group <nombre-del-grupo> type external
+set protocols bgp group <nombre-del-grupo> neighbor <dirección-IP-del-peer> peer-as <número-de-AS-del-peer>
+set protocols bgp group <nombre-del-grupo> neighbor <dirección-IP-del-peer> authentication-key <contraseña-del-peer>
+set protocols bgp group <nombre-del-grupo> neighbor <dirección-IP-del-peer> family inet unicast
+set protocols bgp group <nombre-del-grupo> neighbor <dirección-IP-del-peer> export <nombre-de-política-de-exportación>
+set protocols bgp group <nombre-del-grupo> neighbor <dirección-IP-del-peer> import <nombre-de-política-de-importación>
+set protocols bgp group <nombre-del-grupo> neighbor <dirección-IP-del-peer> local-as <número-de-AS>
+set protocols bgp group <nombre-del-grupo> neighbor <dirección-IP-del-peer> hold-time <valor-de-tiempo-de-espera>
+
+
+Explicación de los comandos:
+
+<nombre-del-grupo>: Especifica un nombre para el grupo BGP.
+<dirección-IP-del-peer>: Indica la dirección IP del peer BGP con el que deseas establecer la sesión.
+<número-de-AS-del-peer>: Configura el número de sistema autónomo del peer BGP.
+<contraseña-del-peer>: Establece una contraseña opcional para la autenticación entre los peers.
+<nombre-de-política-de-exportación>: Define el nombre de la política de exportación que controla las rutas a anunciar al peer.
+<nombre-de-política-de-importación>: Especifica el nombre de la política de importación que controla las rutas aceptadas del peer.
+<número-de-AS>: Configura el número de sistema autónomo (ASN) de tu propio sistema.
+<valor-de-tiempo-de-espera>: Establece el tiempo de espera (hold time) para la sesión BGP.
+Recuerda que también necesitarás configurar las interfaces de los routers con las direcciones IP correspondientes y asegurarte de que haya conectividad entre ellos antes de configurar BGP. Además, ten en cuenta que esta es solo una configuración básica y puede haber otras opciones y ajustes adicionales dependiendo de tus requisitos de red.
+
+
+===
+
