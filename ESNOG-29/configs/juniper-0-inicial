@@ -24,6 +24,143 @@ Explicación de los comandos:
 <valor-de-tiempo-de-espera>: Establece el tiempo de espera (hold time) para la sesión BGP.
 Recuerda que también necesitarás configurar las interfaces de los routers con las direcciones IP correspondientes y asegurarte de que haya conectividad entre ellos antes de configurar BGP. Además, ten en cuenta que esta es solo una configuración básica y puede haber otras opciones y ajustes adicionales dependiendo de tus requisitos de red.
 
+===
+
+
+-> puedes mostrarme la configuracion de una interfaz de un router juniper con la ip 100.1.2.1
+
+
+Por supuesto, aquí tienes un ejemplo de cómo sería la configuración de una interfaz en un router Juniper con la dirección IP 100.1.2.1:
+
+css
+Copy code
+interfaces {
+    ge-0/0/0 {
+        unit 0 {
+            family inet {
+                address 100.1.2.1/24;
+            }
+        }
+    }
+}
+En este ejemplo, se configura la interfaz ge-0/0/0 con la dirección IP 100.1.2.1 y una máscara de subred /24. Puedes modificar el nombre de la interfaz según la nomenclatura específica de tu router Juniper.
+
+Recuerda que esta es solo una parte de la configuración de la interfaz. Pueden existir otras opciones adicionales según tus necesidades, como configurar opciones de seguridad, VLANs, protocolos de enrutamiento, etc.
+
+Espero que esto te sea útil. Si tienes más preguntas, no dudes en preguntar.
+
+---
+
+-> puedes mostrarme la configuracion de una interfaz de un router juniper con la ip 100.1.2.1 con el comando set
+
+Claro, aquí tienes un ejemplo de configuración de una interfaz en un router Juniper utilizando el comando "set" y asignando la dirección IP 100.1.2.1:
+
+set interfaces ge-0/0/0 unit 0 family inet address 100.1.2.1/24
+
+En este ejemplo, se configura la interfaz ge-0/0/0 con la dirección IP 100.1.2.1 y una máscara de subred /24.
+
+Recuerda adaptar la configuración según la nomenclatura específica de tu router Juniper. También puedes agregar opciones adicionales según tus necesidades, como configurar la velocidad y el modo de duplex de la interfaz.
+
+Si deseas configurar más opciones en la interfaz, puedes continuar agregando líneas de configuración utilizando el comando "set" y especificando la opción deseada.
+
+Espero que esto te sea útil. Si tienes más preguntas, no dudes en preguntar.
+
 
 ===
+
+root // esnog29
+BGP password: ME_GUSTA_EL_CAFE
+
+
+root@tecnocratica-as15954> show configuration
+## Last commit: 2023-05-14 15:14:03 UTC by root
+version 14.1R1.10;
+system {
+    host-name tecnocratica-as15954;
+    root-authentication {
+        encrypted-password "$1$Hs/CIGlH$1aEq50SCZDJZ5DD3RmQ.z/"; ## SECRET-DATA
+    }
+    login {
+    }
+    services {
+        ssh {
+            root-login allow;
+        }
+        telnet {
+            connection-limit 5;
+        }
+    }
+    syslog {
+        user * {
+            any emergency;
+        }
+        file messages {
+            any notice;
+            authorization info;
+        }
+        file interactive-commands {
+            interactive-commands any;
+        }
+    }
+}
+logical-systems {
+    r1 {
+        interfaces {
+            ge-0/0/0 {
+                unit 0 {
+                    family inet {
+                        address 10.1.1.1/24;
+                    }
+                }
+            }
+        }
+    }
+    r2 {
+        interfaces {
+            ge-0/0/1 {
+                unit 0 {
+                    family inet {
+                        address 10.1.1.2/24;
+                    }
+                }
+            }
+        }
+    }
+}
+interfaces {
+    ge-0/0/3 {
+        description "--- BGP Peer ---";
+        unit 0 {
+            family inet {
+                address 100.1.2.1/24;
+            }
+        }
+    }
+    em0 {
+        unit 0 {
+            family inet {
+                address 200.0.0.4/24 {
+                    master-only;
+                }
+            }
+        }
+    }
+}
+protocols {
+    bgp {
+        group PEER-BGP {
+            type external;
+            neighbor 100.1.2.2 {
+                family inet {
+                    unicast;
+                }
+                authentication-key "$9$77-w2ZGjfznuONVY2ZG9Ctu01Lx-Y2omfMLN-sYg4aGDHf5z"; ## SECRET-DATA
+                peer-as 56882;
+                local-as 15954;
+            }
+        }
+    }
+}
+
+
 

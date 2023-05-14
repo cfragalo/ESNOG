@@ -36,4 +36,137 @@ Recuerda que también debes configurar las direcciones IP de las interfaces del 
 ===
 
 
+puedes configurar una interfaz de un equipo Arista para que haga de routing
+
+Por supuesto, aquí tienes un ejemplo de configuración de una interfaz en un equipo Arista para habilitar el enrutamiento:
+
+
+interface EthernetX
+   no switchport
+   ip address <dirección-IP>/<máscara-de-subred>
+   ip routing
+
+
+En este ejemplo, reemplaza "EthernetX" con el nombre de la interfaz que deseas configurar como interfaz de enrutamiento. Luego, especifica la dirección IP y la máscara de subred que deseas asignar a la interfaz.
+
+Asegúrate de agregar el comando "no switchport" para cambiar la interfaz de modo conmutado a modo de enrutamiento. Luego, utiliza el comando "ip address" para configurar la dirección IP y la máscara de subred para la interfaz.
+
+Finalmente, habilita el enrutamiento en el equipo Arista con el comando "ip routing". Esto permite que el equipo actúe como un enrutador y procese el tráfico de enrutamiento.
+
+Recuerda adaptar la configuración según tus necesidades y la nomenclatura específica de tu equipo Arista. Además, asegúrate de que la interfaz esté conectada correctamente y haya conectividad de red adecuada antes de habilitar el enrutamiento en la interfaz.
+
+Espero que esto te sea útil. Si tienes más preguntas, no dudes en preguntar
+
+===
+
+
+a pesar que he puesto el comando network <prefijo-de-red-a-anunciar> no veo las redes anunciadas en el otro peer, a que puede ser debido
+
+
+Si has configurado correctamente el comando network <prefijo-de-red-a-anunciar> en BGP, pero no ves las redes anunciadas en el otro peer, aquí hay algunas posibles razones:
+
+Verificación de las políticas de enrutamiento: Asegúrate de que las políticas de enrutamiento en el peer receptor permitan el anuncio de las redes que estás intentando anunciar. Revisa las configuraciones de las listas de acceso, las listas de filtros o las políticas de importación y exportación utilizadas en el peer receptor.
+
+Verificación de la conectividad: Asegúrate de que haya conectividad entre los dos peers BGP. Verifica que las direcciones IP y las configuraciones de las interfaces de los routers estén correctamente configuradas y que haya conectividad de red adecuada entre ellos.
+
+Verificación del estado de la sesión BGP: Comprueba si la sesión BGP entre los dos peers está establecida correctamente. Puedes utilizar comandos como show bgp summary o show bgp neighbor en los routers para verificar el estado de la sesión BGP y asegurarte de que esté en el estado "Established".
+
+Verificación de los filtros y políticas de importación: Si estás utilizando filtros o políticas de importación en el peer receptor, verifica si estas políticas están filtrando las redes que intentas anunciar. Asegúrate de que las políticas estén configuradas adecuadamente para permitir el anuncio de las redes deseadas.
+
+Verificación de la tabla de enrutamiento: Comprueba la tabla de enrutamiento en el peer receptor para asegurarte de que las rutas anunciadas por el peer origen estén presentes. Utiliza comandos como show ip route o show bgp routes en el peer receptor para verificar si las rutas están siendo recibidas correctamente.
+
+Estas son solo algunas posibles razones por las que las redes anunciadas no se están reflejando en el otro peer. Recuerda que la solución específica dependerá de tu configuración y de la plataforma de enrutamiento que estés utilizando.
+
+Si sigues teniendo problemas, proporciona más detalles sobre tu configuración específica y los comandos de verificación que has utilizado, para que pueda ayudarte de manera más precisa.
+
+---
+
+aqui tienes mi configuración de routing en el Arista, para que puedas  analizarlo por si falta algun comando:
+
+Gracias por proporcionar tu configuración. Parece que has configurado la sesión BGP correctamente en tu router Arista. Sin embargo, hay un detalle en la configuración que podría estar causando el problema.
+
+En la línea "network 185.183.8.0/22", estás intentando anunciar la red 185.183.8.0/22 a través de BGP. Sin embargo, en tu configuración de interfaz, solo tienes asignada la dirección IP 100.1.2.2/24 a la interfaz Ethernet5. Para que la red 185.183.8.0/22 se anuncie correctamente a través de BGP, debes asegurarte de que la interfaz Ethernet5 esté conectada a la red 185.183.8.0/22.
+
+Si la interfaz Ethernet5 está conectada a la red 185.183.8.0/22, entonces el problema puede estar en la configuración del peer BGP remoto (dirección IP 100.1.2.1). Asegúrate de que el peer BGP remoto esté configurado correctamente y esté en el estado "Established". También verifica las políticas de enrutamiento en el peer remoto para asegurarte de que esté permitiendo las rutas anunciadas desde tu router Arista.
+
+Si todo está configurado correctamente y sigues teniendo problemas, es posible que debas verificar los registros o mensajes de error del router Arista para obtener más detalles sobre el problema específico.
+
+
+===
+
+admin // esnog29
+
+lcr-as56882#sh run
+! Command: show running-config
+! device: lcr-as56882 (vEOS-lab, EOS-4.26.5M)
+!
+! boot system flash:/vEOS-lab.swi
+!
+no aaa root
+!
+username admin privilege 15 role network-admin secret sha512 $6$5PBGSAcIBK11584H$xlsZPqskokeGzConW5tI9fOslYSdDeYNGoELujKmScSu0fIv/Ir.CKy0UYy9RrGNZ8XZWa2BkvVEzMV/JPt0G/
+!
+transceiver qsfp default-mode 4x10G
+!
+service routing protocols model ribd
+!
+hostname lcr-as56882
+!
+spanning-tree mode mstp
+!
+interface Ethernet1
+   shutdown
+!
+interface Ethernet2
+   shutdown
+!
+interface Ethernet3
+   shutdown
+!
+interface Ethernet4
+   shutdown
+!
+interface Ethernet5
+   speed auto
+   no switchport
+   ip address 100.1.2.2/24
+!
+interface Ethernet6
+   shutdown
+!
+interface Ethernet7
+   shutdown
+!
+interface Ethernet8
+   shutdown
+!
+interface Management1
+   ip address 200.0.0.2/24
+!
+ip routing
+!
+ip route 185.183.8.0/22 Null0
+!
+router bgp 56882
+   router-id 100.1.2.2
+   neighbor 100.1.2.1 remote-as 15954
+   neighbor 100.1.2.1 password 7 e/stE3WlvauYNwOhvjbYzrYhXOy6CCll
+   network 185.183.8.0/22
+!
+end
+
+
+---
+
+lcr-as56882#sh ip bgp summary
+BGP summary information for VRF default
+Router identifier 100.1.2.2, local AS number 56882
+Neighbor Status Codes: m - Under maintenance
+  Neighbor         V  AS           MsgRcvd   MsgSent  InQ OutQ  Up/Down State   PfxRcd PfxAcc
+  100.1.2.1        4  15954              4         4    0    0 00:00:15 Estab   0      0
+
+
+===
+
+
 
