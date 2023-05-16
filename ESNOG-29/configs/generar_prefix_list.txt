@@ -1,0 +1,207 @@
+
+
+como puedo generar un lista de prefijos a partir de AS para un peer BGP
+---
+
+Para generar una lista de prefijos a partir de un Sistema Autónomo (AS) para un peer BGP, puedes seguir estos pasos:
+
+Obtén la tabla de enrutamiento BGP para el AS en cuestión. Esto se puede hacer mediante comandos en el enrutador BGP o utilizando herramientas de monitoreo y análisis de red como Looking Glass.
+
+Analiza la tabla de enrutamiento BGP y filtra los prefijos que son anunciados por el AS en cuestión. Puedes filtrarlos en función del atributo de origen (origin), que indicará si el prefijo es anunciado por el propio AS o si es un prefijo transitivo proveniente de otro AS.
+
+Si deseas una lista específica de prefijos que se anuncian directamente por el AS (originados), puedes filtrar los prefijos basándote en el atributo de ruta local (local preference) o en otros atributos de ruta específicos del AS.
+
+Puedes utilizar herramientas de scripting o programación como Python y sus librerías de enrutamiento (como pytricia o pybgpstream) para automatizar el proceso de extracción y filtrado de prefijos.
+
+Una vez que hayas obtenido la lista de prefijos, puedes almacenarlos en un archivo o utilizarlos para configurar sesiones BGP con tus peers, según sea necesario.
+
+Recuerda que el proceso exacto puede variar dependiendo de la plataforma y las herramientas que estés utilizando. Es importante consultar la documentación y las guías de referencia correspondientes a tu entorno específico para obtener instrucciones detalladas sobre cómo obtener y filtrar los prefijos BGP para un AS determinado.
+
+
+
+===
+
+como puedo obtener todos los prefijos a partir de un AS 
+---
+
+
+Para obtener todos los prefijos anunciados por un Sistema Autónomo (AS), puedes utilizar herramientas como BGP Looking Glass o realizar consultas a la base de datos de enrutamiento BGP (Routeviews, RIPEstat, entre otros). Aquí te proporcionaré un ejemplo utilizando BGP Looking Glass:
+
+Encuentra un BGP Looking Glass que te permita realizar consultas a los enrutadores BGP de diferentes proveedores de servicios de Internet (ISP). Puedes buscar en línea utilizando términos como "BGP Looking Glass" seguido del nombre del proveedor o región.
+
+Accede al BGP Looking Glass del proveedor de tu elección.
+
+Ingresa el número de AS del que deseas obtener los prefijos en el campo de búsqueda o utiliza el comando correspondiente. Por ejemplo, si deseas obtener los prefijos del AS 12345, ingresa "show ip bgp 12345" o "show route 12345".
+
+El Looking Glass mostrará la tabla de enrutamiento BGP del AS especificado, que incluye todos los prefijos anunciados por ese AS. Puedes ver la dirección IP de los prefijos y otra información relevante, como el siguiente salto (next hop) y el AS Path.
+
+Puedes exportar la información a un archivo o copiarla en un editor de texto para guardarla o utilizarla según sea necesario.
+
+Es importante tener en cuenta que los resultados pueden variar dependiendo del Looking Glass utilizado y de las políticas de visualización de información de cada proveedor. Además, ten en cuenta que algunos proveedores pueden requerir autenticación para acceder a su Looking Glass.
+
+Si deseas obtener una visión más completa y actualizada de los prefijos anunciados por un AS, puedes considerar utilizar servicios de monitoreo de enrutamiento BGP en tiempo real o consultar bases de datos de enrutamiento BGP, como la base de datos de RIPEstat.
+
+
+
+===
+
+
+como puedo obtener todos los prefijos de un AS 
+---
+
+Para obtener todos los prefijos anunciados por un Sistema Autónomo (AS), puedes utilizar herramientas y bases de datos de enrutamiento BGP. A continuación, te presento dos métodos comunes:
+
+Utilizando la base de datos de enrutamiento BGP (como RIPEstat):
+
+Accede al sitio web de RIPEstat (https://stat.ripe.net/) u otra base de datos de enrutamiento BGP.
+Ingresa el número de AS del que deseas obtener los prefijos en el campo de búsqueda.
+Busca la opción o pestaña relacionada con la información de enrutamiento BGP para ese AS.
+La base de datos mostrará una lista de prefijos anunciados por ese AS, junto con otra información relevante, como la longitud del prefijo y el origen del anuncio.
+Puedes exportar la información o copiarla en un archivo para su uso posterior.
+Utilizando herramientas de línea de comandos o scripts:
+
+Utiliza herramientas como "bgp" en sistemas operativos Unix o "show ip bgp" en enrutadores Cisco.
+Conecta a un enrutador BGP y ejecuta el comando adecuado, especificando el número de AS del que deseas obtener los prefijos.
+La salida mostrará la tabla de enrutamiento BGP del AS especificado, que incluirá todos los prefijos anunciados por ese AS.
+Puedes redirigir la salida a un archivo para guardarla o utilizar herramientas de scripting para procesarla según sea necesario.
+Recuerda que los resultados pueden variar según la fuente de datos utilizada y las políticas de visualización de información de cada proveedor. Además, ten en cuenta que algunos proveedores pueden requerir autenticación para acceder a su base de datos de enrutamiento BGP o enrutadores.
+
+
+
+===
+
+
+como puedo obtener todos los prefijos de un AS y generar un prefix-list automaticamente
+---
+
+Para obtener todos los prefijos de un Sistema Autónomo (AS) y generar una lista de prefijos automáticamente, puedes utilizar herramientas y scripts para extraer la información de la tabla de enrutamiento BGP y luego generar la lista de prefijos. A continuación, te presento un ejemplo de cómo podrías hacerlo utilizando Python y la librería pytricia:
+
+Instala la librería pytricia utilizando el siguiente comando en la terminal:
+
+	pip install pytricia
+
+Crea un script de Python con el siguiente código:
+
+
+	from pytricia import PyTricia
+	from subprocess import check_output
+
+	# Obtén la tabla de enrutamiento BGP para el AS y guárdala en un archivo
+	as_number = "12345"  # Reemplaza con el número de AS deseado
+	output_file = "bgp_table.txt"
+	command = f"show ip bgp {as_number} > {output_file}"  # Comando específico del enrutador
+	check_output(command, shell=True)
+
+	# Lee el archivo de la tabla de enrutamiento y extrae los prefijos
+	prefix_list = PyTricia()
+	with open(output_file, "r") as file:
+    	     for line in file:
+                 line = line.strip()
+        if line.startswith("BGP routing table entry"):
+            parts = line.split()
+            prefix = parts[2]
+            prefix_list[prefix] = True
+
+	# Genera el archivo prefix-list con los prefijos extraídos
+	prefix_list_file = "prefix_list.txt"
+	with open(prefix_list_file, "w") as file:
+    	     for prefix in prefix_list.keys():
+                 file.write(f"ip prefix-list PREFIX_LIST permit {prefix}\n")
+
+Reemplaza as_number con el número de AS del que deseas obtener los prefijos.
+
+Ejecuta el script de Python y generará un archivo llamado prefix_list.txt que contendrá una lista de comandos ip prefix-list para permitir todos los prefijos extraídos de la tabla de enrutamiento BGP.
+
+Puedes ajustar el código según tus necesidades específicas, como la forma en que se ejecuta el comando show ip bgp en tu enrutador o la estructura de la lista de prefijos generada.
+
+Recuerda que el proceso puede variar según el enrutador y la versión del sistema operativo que estés utilizando. Asegúrate de consultar la documentación específica de tu enrutador y adaptar el código en consecuencia.
+
+
+
+===
+
+
+no hay otro metodo más simple ?
+---
+
+Si estás buscando un método más simple para obtener todos los prefijos de un Sistema Autónomo (AS) y generar una lista de prefijos automáticamente, puedes considerar el uso de herramientas de automatización de red como NAPALM o Netmiko. Estas herramientas te permiten interactuar con enrutadores y conmutadores de red mediante scripts de Python. Aquí hay un ejemplo utilizando la biblioteca NAPALM:
+
+Instala la biblioteca NAPALM utilizando el siguiente comando en la terminal:
+
+
+	pip install napalm
+
+Crea un script de Python con el siguiente código:
+
+
+	from napalm import get_network_driver
+
+	# Configuración del dispositivo
+	driver = get_network_driver('ios')  # Reemplaza 'ios' por el nombre del sistema operativo del enrutador
+	device_ip = '192.168.1.1'  # Reemplaza con la dirección IP del enrutador
+	username = 'username'  # Reemplaza con el nombre de usuario
+	password = 'password'  # Reemplaza con la contraseña
+
+	# Conexión al enrutador
+	device = driver(device_ip, username, password)
+	device.open()
+
+	# Obtención de la tabla de enrutamiento BGP
+	bgp_table = device.get_bgp_neighbors()
+
+	# Generación de la lista de prefijos
+	prefix_list = []
+	for neighbor, data in bgp_table.items():
+    	    for prefix in data['address_family']['ipv4']['received_prefixes']:
+        	prefix_list.append(prefix)
+
+	# Impresión de la lista de prefijos
+	for prefix in prefix_list:
+    	    print(prefix)
+
+	# Cierre de la conexión
+	device.close()
+
+Reemplaza 'ios' con el nombre del sistema operativo del enrutador que estás utilizando (por ejemplo, 'iosxr' o 'junos').
+
+Reemplaza '192.168.1.1', 'username' y 'password' con la dirección IP del enrutador, el nombre de usuario y la contraseña correspondientes.
+
+Ejecuta el script de Python y obtendrás una lista de todos los prefijos anunciados por el AS al que está conectado el enrutador.
+
+Este enfoque utiliza la biblioteca NAPALM para establecer una conexión con el enrutador, obtener la tabla de enrutamiento BGP y extraer los prefijos. Puedes adaptar el código según tus necesidades específicas, como almacenar los prefijos en un archivo o utilizarlos para otras tareas de automatización de red.
+
+Recuerda consultar la documentación y los ejemplos proporcionados por NAPALM para obtener más información sobre cómo interactuar con diferentes sistemas operativos y dispositivos de red.
+
+
+===
+
+como puedo obtener todos los prefijos de un AS a partir de la base de datos de objetos de RIPE y generar un prefix-list automaticamente
+---
+
+
+
+Para obtener todos los prefijos de un AS a partir de la base de datos de objetos de RIPE y generar una prefix-list automáticamente, puedes seguir estos pasos:
+
+Accede a la página web de RIPE (https://www.ripe.net/) y navega hasta la sección "Data" o "Data Tools".
+
+Busca la herramienta "RIPE Database" o "RIPEstat" en la sección de datos y accede a ella.
+
+Utiliza la función de búsqueda de objetos de RIPE para encontrar el objeto relacionado con el AS del cual deseas obtener los prefijos. Puedes buscar el AS por su número o su nombre.
+
+Una vez que hayas encontrado el objeto del AS, busca la sección que muestra los prefijos anunciados por ese AS. Por lo general, estos prefijos se encuentran en el atributo "route" o "route6" del objeto.
+
+Copia los prefijos anunciados por el AS, incluyendo el prefijo y su máscara de longitud.
+
+Utiliza los prefijos copiados para generar una prefix-list en el formato requerido por tu equipo de red. Por ejemplo, en un equipo Cisco, la configuración de la prefix-list se vería así:
+
+
+	ip prefix-list <nombre-prefix-list> permit <prefijo-máscara>
+
+Reemplaza "<nombre-prefix-list>" por el nombre que desees darle a tu prefix-list y "<prefijo-máscara>" por cada uno de los prefijos copiados anteriormente.
+
+Repite los pasos 5 y 6 para todos los prefijos que deseas incluir en la prefix-list.
+
+Aplica la prefix-list a la interfaz o al protocolo BGP correspondiente en tu equipo de red.
+
+Recuerda que la obtención de los prefijos puede variar dependiendo de la herramienta específica que utilices para acceder a la base de datos de RIPE y de las políticas de visualización y acceso de dicha base de datos. Además, ten en cuenta que es posible que los prefijos anunciados por un AS cambien con el tiempo, por lo que es recomendable mantener la prefix-list actualizada periódicamente.
+

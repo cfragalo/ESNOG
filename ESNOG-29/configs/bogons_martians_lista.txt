@@ -1,0 +1,100 @@
+
+
+que diferencia hay entre en un prefijo BOGON y un MARTIAN 
+---
+
+
+Tanto los prefijos BOGON como los prefijos MARTIAN son términos utilizados en el contexto de direcciones IP para referirse a rangos específicos que se consideran inválidos o no ruteables en Internet. Sin embargo, hay una diferencia fundamental entre ellos:
+
+Prefijos BOGON: Los prefijos BOGON son rangos de direcciones IP que no están asignados o son reservados para uso especial. Estos prefijos no deben aparecer en las tablas de enrutamiento de Internet ni ser anunciados en sesiones BGP. Los prefijos BOGON incluyen direcciones IP como las reservadas para uso privado (por ejemplo, 10.0.0.0/8, 192.168.0.0/16) y otras direcciones especiales como 0.0.0.0/8 o 127.0.0.0/8. Los prefijos BOGON se utilizan para filtrar y evitar que se propaguen en la red.
+
+Prefijos MARTIAN: Los prefijos MARTIAN se refieren a direcciones IP que nunca deben aparecer en el tráfico de Internet público. Estas direcciones son consideradas "marcianas" debido a que son inválidas y no se originan en fuentes legítimas. Los prefijos MARTIAN incluyen direcciones IP reservadas como 0.0.0.0/32, 0.0.0.0/8, 127.0.0.0/8 y otras direcciones utilizadas para pruebas, experimentación o propósitos especiales. Los prefijos MARTIAN deben ser filtrados y descartados por los dispositivos de red para evitar problemas de enrutamiento y seguridad.
+
+En resumen, la diferencia principal entre los prefijos BOGON y los prefijos MARTIAN radica en su propósito y en los rangos de direcciones IP que abarcan. Los prefijos BOGON se refieren a rangos no asignados o reservados, mientras que los prefijos MARTIAN son direcciones inválidas que nunca deben aparecer en el tráfico de Internet público. Ambos tipos de prefijos son importantes para mantener una red segura y eficiente al filtrar y descartar direcciones IP inapropiadas o no ruteables.
+
+
+===
+
+me puedes indicar una lista de BOGONS y MARTIAN de IPv4 junto con su RFC y el titulo de este RFC asociado, indicando si es MARTIAN O BOGON
+
+---
+
+Aquí tienes una lista de los BOGONS y MARTIAN de IPv4 junto con las referencias RFC, y se indica si son BOGONS o MARTIAN:
+
+0.0.0.0/8 (RFC 1700) - BOGON - "Assigned Numbers"
+10.0.0.0/8 (RFC 1918) - BOGON - "Address Allocation for Private Internets"
+100.64.0.0/10 (RFC 6598) - BOGON - "IANA-Reserved IPv4 Prefix for Shared Address Space"
+127.0.0.0/8 (RFC 5735) - MARTIAN - "Special Use IPv4 Addresses"
+169.254.0.0/16 (RFC 3927) - MARTIAN - "Dynamic Configuration of IPv4 Link-Local Addresses"
+172.16.0.0/12 (RFC 1918) - BOGON - "Address Allocation for Private Internets"
+192.0.0.0/24 (RFC 6890) - BOGON - "Special-Purpose IP Address Registries"
+192.0.2.0/24 (RFC 5737) - BOGON - "IPv4 Address Blocks Reserved for Documentation"
+192.88.99.0/24 (RFC 3068) - BOGON - "An Anycast Prefix for 6to4 Relay Routers"
+192.168.0.0/16 (RFC 1918) - BOGON - "Address Allocation for Private Internets"
+198.18.0.0/15 (RFC 2544) - BOGON - "Benchmarking Methodology for Network Interconnect Devices"
+198.51.100.0/24 (RFC 5737) - BOGON - "IPv4 Address Blocks Reserved for Documentation"
+203.0.113.0/24 (RFC 5737) - BOGON - "IPv4 Address Blocks Reserved for Documentation"
+224.0.0.0/4 (RFC 3171) - MARTIAN - "IANA Guidelines for IPv4 Multicast Address Assignments"
+240.0.0.0/4 (RFC 1112) - MARTIAN - "Host Extensions for IP Multicasting"
+
+Esta lista incluye tanto los rangos de direcciones BOGONS como los rangos MARTIAN de IPv4. Los BOGONS son rangos que no están asignados o son reservados, mientras que los MARTIAN son direcciones inválidas y especiales que no deben aparecer en el tráfico público de Internet. Los RFC asociados proporcionan las especificaciones y recomendaciones para el uso de estas direcciones IP. Es importante filtrar y descartar adecuadamente los BOGONS y MARTIAN en las configuraciones de red para mantener la seguridad y el correcto funcionamiento del enrutamiento.
+
+
+===
+
+en una prefix-list expuesto a Internet filtrarias y denegarias el trafico hacia prefijos Martians?
+---
+
+
+En una configuración de filtro de prefix-list expuesta a Internet, es recomendable filtrar y denegar el tráfico hacia los prefijos MARTIAN para mejorar la seguridad y evitar problemas de enrutamiento. Para ello, puedes utilizar las siguientes reglas en tu prefix-list:
+
+deny 0.0.0.0/8
+deny 10.0.0.0/8
+deny 100.64.0.0/10
+deny 127.0.0.0/8
+deny 169.254.0.0/16
+deny 172.16.0.0/12
+deny 192.0.0.0/24
+deny 192.0.2.0/24
+deny 192.88.99.0/24
+deny 192.168.0.0/16
+deny 198.18.0.0/15
+deny 198.51.100.0/24
+deny 203.0.113.0/24
+deny 224.0.0.0/4
+deny 240.0.0.0/4
+
+Estas reglas denegarán cualquier tráfico proveniente o destinado a los prefijos MARTIAN mencionados previamente. Recuerda que es importante ajustar estas reglas según tus necesidades y las políticas de seguridad de tu red. Además, es recomendable mantener actualizada la lista de prefijos MARTIAN, ya que pueden ser añadidos o modificados en futuras actualizaciones de los RFC correspondientes.
+
+
+===
+
+
+me puedes generar una lista de acceso para un equipo ARISTA filtrando bogons y martians 
+---
+
+Por supuesto, aquí tienes un ejemplo de cómo configurar una lista de acceso en un equipo Arista para filtrar los prefijos BOGON y MARTIAN:
+
+
+access-list bogons-martians
+   10 deny ip 0.0.0.0/8 any
+   20 deny ip 10.0.0.0/8 any
+   30 deny ip 100.64.0.0/10 any
+   40 deny ip 127.0.0.0/8 any
+   50 deny ip 169.254.0.0/16 any
+   60 deny ip 172.16.0.0/12 any
+   70 deny ip 192.0.0.0/24 any
+   80 deny ip 192.0.2.0/24 any
+   90 deny ip 192.88.99.0/24 any
+   100 deny ip 192.168.0.0/16 any
+   110 deny ip 198.18.0.0/15 any
+   120 deny ip 198.51.100.0/24 any
+   130 deny ip 203.0.113.0/24 any
+   140 deny ip 224.0.0.0/4 any
+   150 deny ip 240.0.0.0/4 any
+   160 permit ip any any
+
+En este ejemplo, la lista de acceso "bogons-martians" deniega los prefijos BOGON y MARTIAN y permite cualquier otro tráfico. Asegúrate de aplicar esta lista de acceso en las interfaces relevantes de tu equipo Arista utilizando el comando "ip access-group bogons-martians in" en la interfaz correspondiente.
+
+Recuerda que esta configuración puede variar dependiendo del modelo y la versión de software de tu equipo Arista, por lo que es importante adaptarla según tus necesidades y las características de tu dispositivo.
+
