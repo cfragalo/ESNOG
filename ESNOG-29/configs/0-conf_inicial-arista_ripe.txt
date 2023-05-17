@@ -1,0 +1,52 @@
+RIPE-AS3333(config)#sh run 
+! Command: show running-config
+! device: RIPE-AS3333 (vEOS-lab, EOS-4.26.5M)
+!
+! boot system flash:/vEOS-lab.swi
+!
+no aaa root
+!
+username admin privilege 15 role network-admin secret sha512 $6$pbbx4Hk8PE.bDiYB$iNIG4tr026r0jqwT89E7tg5O5g1qMzeKzzBcBlQU1nxI6HILi7i0oBzc
+AQSIRekg8nMSLKcLmJXyp2eXaJhOM1
+!
+transceiver qsfp default-mode 4x10G
+!
+service routing protocols model ribd
+!
+hostname RIPE-AS3333
+!
+spanning-tree mode mstp
+!
+interface Ethernet1
+!
+interface Ethernet2
+   speed auto
+   no switchport
+   ip address 100.1.3.3/24
+!
+interface Ethernet3
+   speed auto
+   no switchport
+   ip address 100.2.3.3/24
+!
+interface Ethernet4
+!
+interface Ethernet5
+!
+interface Ethernet6
+!
+interface Ethernet7
+!
+interface Ethernet8
+!
+interface Management1
+   ip address 200.0.0.3/24
+!
+ip routing
+!
+router bgp 3333
+   router-id 3.3.3.3
+   neighbor 100.1.3.1 remote-as 15954
+   neighbor 100.1.3.1 password 7 e/stE3WlvauYNwOhvjbYzrYhXOy6CCll
+!
+end
